@@ -16,7 +16,7 @@ class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
 
         // Set the Renderer for drawing on the GLSurfaceView
         setRenderer(renderer)
-        renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+        //renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
     }
 
 }
