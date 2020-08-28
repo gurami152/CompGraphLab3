@@ -10,10 +10,10 @@ import java.nio.ShortBuffer
 class Square {
 
     var squareCoords = floatArrayOf(
-        -0.5f,  0.5f, 0.0f,      // top left
-        -0.5f, -0.5f, 0.0f,      // bottom left
-        0.5f, -0.5f, 0.0f,      // bottom right
-        0.5f,  0.5f, 0.0f       // top right
+        -0.7f, -0.7f, 0.0f,      // top left
+        -0.7f, -0.9f, 0.0f,      // bottom left
+        -0.2f, -0.9f, 0.0f,      // bottom right
+        -0.2f, -0.7f, 0.0f       // top right
     )
     private val drawOrder = shortArrayOf(0, 1, 2, 0, 2, 3) // order to draw vertices
 
@@ -43,17 +43,18 @@ class Square {
 
 
     private val vertexShaderCode =
-        "attribute vec4 vPosition;" +
+        "uniform mat4 uMVPMatrix;" +
+                "attribute vec4 vPosition;" +
                 "void main() {" +
-                "  gl_Position = vPosition;" +
+                "  gl_Position = uMVPMatrix * vPosition;" +
                 "}"
-
     private val fragmentShaderCode =
         "precision mediump float;" +
                 "uniform vec4 vColor;" +
                 "void main() {" +
                 "  gl_FragColor = vColor;" +
                 "}"
+
 
     fun loadShader(type: Int, shaderCode: String): Int {
 
@@ -66,6 +67,7 @@ class Square {
             GLES20.glCompileShader(shader)
         }
     }
+    private var vPMatrixHandle: Int = 0
     private var mProgram: Int
 
     init {
@@ -92,7 +94,7 @@ class Square {
     private val vertexCount: Int = squareCoords.size / COORDS_PER_VERTEX
     private val vertexStride: Int = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
 
-    fun draw() {
+    fun draw(mvpMatrix: FloatArray) {
         // Add program to OpenGL ES environment
         GLES20.glUseProgram(mProgram)
 
@@ -118,7 +120,11 @@ class Square {
                 // Set color for drawing the triangle
                 GLES20.glUniform4fv(colorHandle, 1, color, 0)
             }
+            // get handle to shape's transformation matrix
+            vPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix")
 
+            // Pass the projection and view transformation to the shader
+            GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, mvpMatrix, 0)
             // Draw the triangle
             GLES20.glDrawElements(
                 GLES20.GL_TRIANGLES, drawOrder.size,
@@ -128,5 +134,7 @@ class Square {
             GLES20.glDisableVertexAttribArray(it)
         }
     }
+
+
 
 }

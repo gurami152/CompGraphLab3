@@ -15,7 +15,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
 
     private lateinit var mTriangle: Triangle
-
+    private lateinit var mSquare: Square
     private val rotationMatrix = FloatArray(16)
 
 
@@ -40,6 +40,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
         // Draw shape
         mTriangle.draw(scratch)
+        mSquare.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
@@ -56,5 +57,6 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         // Set the background frame color
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         mTriangle = Triangle()
+        mSquare=Square()
     }
 }
